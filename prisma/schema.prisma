@@ -1,19 +1,20 @@
-// prisma/schema.prisma
+// prisma/schema.prisma (version utilisée v5.19.0, la plus stable)
 generator client {
   provider = "prisma-client-js"
-  output = "../src/generated/prisma" 
 }
 
 datasource db {
   provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 // --- UTILISATEUR & AUTHENTIFICATION ---
 model User {
-  id            String    @id @default(uuid()) // Cet ID viendra de Supabase Auth
+  id            String    @id @default(uuid())
+  firstName     String
+  lastName      String  
   email         String    @unique
-  fullName      String?
-  avatarUrl     String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   
@@ -25,8 +26,6 @@ model User {
   // Relations
   payments      Payment[]
   transactions  Transaction[]
-  agentSettings AgentSettings?
-  agentLogs     AgentLog[]
 }
 
 // --- TRANSACTION BLOCKCHAIN (Transfert de fonds) ---
@@ -36,7 +35,7 @@ model Transaction {
   createdAt   DateTime @default(now())
   
   amount      Float
-  currency    String   @default("USDC") // ex: USDC, AVAX, EURC
+  currency    String  @default("USDC") // ex: USDC, AVAX, EURC
   status      String   @default("PENDING") // PENDING, COMPLETED, FAILED
   type        String   // TRANSFER, DEPOSIT, WITHDRAWAL
   
@@ -66,32 +65,4 @@ model Payment {
   
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-// --- CERVEAU DE L'AGENT IA ---
-// Stocke les préférences pour que l'IA sache quand payer automatiquement
-model AgentSettings {
-  id                String  @id @default(cuid())
-  
-  // Limites de l'IA
-  autoPayLimit      Float   @default(1.0) // En dessous de 1$, l'IA paie sans demander
-  preferredCurrency String  @default("USDC")
-  riskLevel         String  @default("LOW") // LOW, MEDIUM, HIGH
-  
-  userId            String  @unique
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-// --- LOGS DE L'AGENT (Pour la démo) ---
-// Permet d'afficher dans le Dashboard ce que l'IA "pense" et fait en arrière-plan
-model AgentLog {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  
-  action    String   // "X402_PAYMENT", "PRICE_CHECK", "DECISION"
-  message   String   // ex: "Demande de paiement reçue pour 0.05 USDC. Limite auto respectée. Paiement en cours..."
-  metadata  Json?    // Stocker des infos brutes si besoin
-  
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
