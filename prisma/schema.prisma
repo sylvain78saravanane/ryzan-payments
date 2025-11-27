@@ -1,0 +1,97 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+  output = "../src/generated/prisma" 
+}
+
+datasource db {
+  provider  = "postgresql"
+}
+
+// --- UTILISATEUR & AUTHENTIFICATION ---
+model User {
+  id            String    @id @default(uuid()) // Cet ID viendra de Supabase Auth
+  email         String    @unique
+  fullName      String?
+  avatarUrl     String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Wallet Ryzan (Agent) - L'adresse publique sur Avalanche C-Chain
+  walletAddress String?   
+  // Note : En prod, on ne stocke jamais la clé privée ici. 
+  // Pour le hackathon, on peut la stocker chiffrée ou utiliser un Provider externe.
+  
+  // Relations
+  payments      Payment[]
+  transactions  Transaction[]
+  agentSettings AgentSettings?
+  agentLogs     AgentLog[]
+}
+
+// --- TRANSACTION BLOCKCHAIN (Transfert de fonds) ---
+// Sert pour l'historique "Portefeuille" : Envois, Réceptions, Swaps
+model Transaction {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  
+  amount      Float
+  currency    String   @default("USDC") // ex: USDC, AVAX, EURC
+  status      String   @default("PENDING") // PENDING, COMPLETED, FAILED
+  type        String   // TRANSFER, DEPOSIT, WITHDRAWAL
+  
+  toAddress   String   // Destinataire
+  txHash      String?  // Le hash de la transaction sur Snowtrace (Avalanche)
+  
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// --- PAIEMENT X402 (Achat de Services) ---
+// C'est le cœur du sujet : L'IA achète l'accès à une ressource (API, Data)
+model Payment {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  resourceId  String   // L'ID du service acheté (ex: "premium-weather-data")
+  serviceUrl  String?  // L'URL qui a renvoyé le code 402
+  
+  amount      Float
+  currency    String   @default("USDC")
+  status      String   @default("UNPAID") // UNPAID, PROCESSING, PAID, FAILED
+  
+  // La preuve cryptographique (Signature ou TxHash) qui débloque le service
+  proof       String?  
+  
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// --- CERVEAU DE L'AGENT IA ---
+// Stocke les préférences pour que l'IA sache quand payer automatiquement
+model AgentSettings {
+  id                String  @id @default(cuid())
+  
+  // Limites de l'IA
+  autoPayLimit      Float   @default(1.0) // En dessous de 1$, l'IA paie sans demander
+  preferredCurrency String  @default("USDC")
+  riskLevel         String  @default("LOW") // LOW, MEDIUM, HIGH
+  
+  userId            String  @unique
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// --- LOGS DE L'AGENT (Pour la démo) ---
+// Permet d'afficher dans le Dashboard ce que l'IA "pense" et fait en arrière-plan
+model AgentLog {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  
+  action    String   // "X402_PAYMENT", "PRICE_CHECK", "DECISION"
+  message   String   // ex: "Demande de paiement reçue pour 0.05 USDC. Limite auto respectée. Paiement en cours..."
+  metadata  Json?    // Stocker des infos brutes si besoin
+  
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
