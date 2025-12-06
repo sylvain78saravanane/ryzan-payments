@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@prisma/client": "^5.19.0",
+    "@radix-ui/react-dropdown-menu": "^2.1.16",
     "@radix-ui/react-label": "^2.1.8",
     "@radix-ui/react-slot": "^1.2.4",
     "@supabase/supabase-js": "^2.86.0",
@@ -19,6 +20,8 @@
     "next": "16.0.4",
     "react": "19.2.0",
     "react-dom": "19.2.0",
+    "react-is": "^19.2.0",
+    "recharts": "^3.5.1",
     "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {
