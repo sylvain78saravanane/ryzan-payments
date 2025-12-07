@@ -2,13 +2,18 @@
 
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { Blocks, Rabbit, Banknote, SquareArrowOutUpRight, Settings2, LogOut, Wallet, BrainCircuit } from 'lucide-react'
+import { Blocks, Rabbit, Banknote, SquareArrowOutUpRight, Settings2, LogOut, Wallet, BrainCircuit, Receipt, User2Icon, User, Users, Bot, BotIcon } from 'lucide-react'
 import { supabase } from "@/lib/supabase/supabase"
+import { color } from "framer-motion"
+import { Goldman } from "next/font/google"
+import { style } from "framer-motion/client"
 
 const navItems = [
   { icon: Blocks, label: "DASHBOARD", href: "/dashboard" },
-  { icon: Wallet, label: "TRANSACTIONS", href: "/transactions" },
-  { icon: BrainCircuit, label: "AGENT AI", href: "/agent" },
+  { icon: Wallet, label: "TRANSACTIONS", href: "/transactions"},
+  { icon: Users, label: "RECIPIENTS", href: "/recipients" },
+  { icon: BotIcon, label: "AGENT AI", href: "/agent" },
+  
 ]
 
 const bottomItems = [
