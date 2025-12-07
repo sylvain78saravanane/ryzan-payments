@@ -2,23 +2,19 @@
 
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { Blocks, Rabbit, Banknote, SquareArrowOutUpRight, Settings2, LogOut, Wallet, BrainCircuit, Receipt, User2Icon, User, Users, Bot, BotIcon } from 'lucide-react'
+import { Blocks, Wallet, SquareArrowOutUpRight, Settings2, LogOut, BotIcon, Users, UserCircle } from 'lucide-react'
 import { supabase } from "@/lib/supabase/supabase"
-import { color } from "framer-motion"
-import { Goldman } from "next/font/google"
-import { style } from "framer-motion/client"
 
 const navItems = [
   { icon: Blocks, label: "DASHBOARD", href: "/dashboard" },
-  { icon: Wallet, label: "TRANSACTIONS", href: "/transactions"},
+  { icon: Wallet, label: "TRANSACTIONS", href: "/transactions" },
   { icon: Users, label: "RECIPIENTS", href: "/recipients" },
   { icon: BotIcon, label: "AGENT AI", href: "/agent" },
-  
 ]
 
 const bottomItems = [
-  { icon: SquareArrowOutUpRight, label: "RYZAN SUPPORT", href: "", external: true },
-  { icon: Settings2, label: "SETTINGS", href: "/settings" },
+  { icon: SquareArrowOutUpRight, label: "RYZAN SUPPORT", href: "https://ryzan.io/support", external: true },
+  { icon: Settings2, label: "SETTINGS", href: "/profil" },
 ]
 
 export function Sidebar() {
