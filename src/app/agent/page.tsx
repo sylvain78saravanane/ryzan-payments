@@ -165,7 +165,7 @@ export default function AgentPage() {
         timestamp: new Date(),
       }])
     } else if (action === "view_history") {
-      window.location.href = "/dashboard/transactions"
+      window.location.href = "/transactions"
     }
   }
 
