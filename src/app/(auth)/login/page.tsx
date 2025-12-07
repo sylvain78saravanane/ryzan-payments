@@ -41,13 +41,18 @@ export default function LoginPage() {
         throw error;
       }
 
-      router.push("/dashboard");
-      router.refresh();
+      // CORRECTION : Suppression des redirections manuelles.
+      // router.push("/dashboard");
+      // router.refresh();
+      
+      // On ne fait rien ici, le AuthContext détectera le changement d'état "SIGNED_IN"
+      // et redirigera automatiquement vers /dashboard.
+      
     } catch (err: any) {
       setError(err.message || "Une erreur est survenue.");
-    } finally {
-      setIsLoading(false);
+      setIsLoading(false); // On arrête le chargement uniquement en cas d'erreur
     }
+    // CORRECTION : Pas de bloc finally pour laisser le loader tourner pendant la redirection
   };
 
   const handleOAuthLogin = async (provider: "google" | "apple") => {

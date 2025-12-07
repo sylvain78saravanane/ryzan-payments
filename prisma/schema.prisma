@@ -15,6 +15,7 @@ model User {
   firstName     String
   lastName      String  
   email         String    @unique
+  phoneNumber   String?   @unique
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   
@@ -26,6 +27,7 @@ model User {
   // Relations
   payments      Payment[]
   transactions  Transaction[]
+  recipients    Recipient[]
 }
 
 // --- TRANSACTION BLOCKCHAIN (Transfert de fonds) ---
@@ -65,4 +67,22 @@ model Payment {
   
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Recipient {
+  id            String   @id @default(cuid())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  name          String
+  walletAddress String
+  email         String?
+  country       String?  // Code pays (ex: "FR", "IN")
+  note          String?
+  isFavorite    Boolean  @default(false)
+
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, walletAddress]) // Empêche les doublons d'adresse pour un même utilisateur
 }
