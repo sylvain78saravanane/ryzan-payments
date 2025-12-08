@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { Wallet, Copy, CheckCircle2, ExternalLink, RefreshCw, AlertTriangle } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { BrowserProvider, formatUnits, Contract } from "ethers" // Import Ethers
-import { AVALANCHE_FUJI_CONFIG, TOKENS_FUJI, ERC20_ABI } from "@/lib/avalanche/avalanche"
+import { AVALANCHE_FUJI_CONFIG, TOKENS_FUJI, ERC20_ABI } from "@/lib/avalanche/config"
 
 interface WalletState {
   isConnected: boolean
